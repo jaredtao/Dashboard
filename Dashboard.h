@@ -25,6 +25,7 @@ public:
     Dashboard(QQuickPaintedItem *parent = nullptr);
 
     void paint(QPainter *painter) override;
+
     qreal startAngle() const;
 
     qreal spanAngle() const;

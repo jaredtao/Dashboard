@@ -2,9 +2,25 @@
 #include <QPen>
 #include <QBrush>
 #include <QtMath>
+#include <QDebug>
+
 const int PEN_WIDTH = 3;
-const int DIVISOR_LENGTH = 10;
+const int DIVISOR_LENGTH = 16;
 const int PRECISION_LENGTH = DIVISOR_LENGTH / 2;
+const int NUMBER_TO_RING_DISTANCE = 30;
+
+class PainterUser {
+public:
+    PainterUser(QPainter *painter) : mPainter(painter) {
+        mPainter->save();
+    }
+    ~PainterUser() {
+        mPainter->restore();
+    }
+private:
+    Q_DISABLE_COPY(PainterUser)
+    QPainter *mPainter;
+};
 Dashboard::Dashboard(QQuickPaintedItem *parent) : QQuickPaintedItem(parent) {
     connect(&mTimer, &QTimer::timeout, this, &Dashboard::timeoutSlot);
     mTimer.start(1000 / 60);
@@ -18,7 +34,7 @@ void Dashboard::timeoutSlot() {
 }
 
 void Dashboard::paint(QPainter *painter) {
-    painter->save();
+    PainterUser paintUser(painter);
 
     painter->setPen(mPen);
     painter->setBrush(mBrush);
@@ -29,6 +45,7 @@ void Dashboard::paint(QPainter *painter) {
     const qreal cx = width() / 2.0;
     const qreal cy = height() / 2.0;
 
+    //画圆弧
     painter->drawArc(PEN_WIDTH, PEN_WIDTH,
                      width() - PEN_WIDTH, height() - PEN_WIDTH,
                      startAngle() * 16 , spanAngle() * 16);
@@ -38,23 +55,32 @@ void Dashboard::paint(QPainter *painter) {
     qreal precisionAngle = divisorAngle / precision();
     //总共要分成小格数
     int gap = divisor() * precision();
+    int gapNumber = (int)fabs(maxValue() - minValue()) / divisor();
     for (int i = 0; i <= gap; ++i) {
         auto angle = qDegreesToRadians(startAngle() + i * precisionAngle);
-        auto divisorStartX = cx + radius * sin(angle);
-        auto divisorStartY = cy + radius * cos(angle);
+        auto divisorStartX = cx + radius * cos(angle);
+        auto divisorStartY = cy - radius * sin(angle);
         auto divisorEndX = 0;
         auto divisorEndY = 0;
         if (0 == i % precision()) {
-            divisorEndX = cx + (radius - DIVISOR_LENGTH) * sin(angle);
-            divisorEndY = cy + (radius - DIVISOR_LENGTH) * cos(angle);
-        } else {
-            divisorEndX = cx + (radius - PRECISION_LENGTH) * sin(angle);
-            divisorEndY = cy + (radius - PRECISION_LENGTH) * cos(angle);
-        }
-        painter->drawLine(divisorStartX, divisorStartY, divisorEndX, divisorEndY);
-    }
+            divisorEndX = cx + (radius - DIVISOR_LENGTH) * cos(angle);
+            divisorEndY = cy - (radius - DIVISOR_LENGTH) * sin(angle);
 
-    painter->restore();
+            auto numberX = cx + (radius - NUMBER_TO_RING_DISTANCE) * cos(angle);
+            auto numberY = cy - (radius - NUMBER_TO_RING_DISTANCE) * sin(angle);
+            auto number = QString("%1").arg(i / precision() * gapNumber + minValue());
+            //cos值符号为正，即角度在-90至90度这个区间，文字应该左偏移
+            if (!qFuzzyCompare(angle, 0) &&  0 == signbit(cos(angle))) {
+                numberX -= number.length() * 8;
+            }
+            painter->drawLine(divisorStartX, divisorStartY, divisorEndX, divisorEndY);
+            painter->drawText(numberX, numberY, number);
+        } else {
+            divisorEndX = cx + (radius - PRECISION_LENGTH) * cos(angle);
+            divisorEndY = cy - (radius - PRECISION_LENGTH) * sin(angle);
+            painter->drawLine(divisorStartX, divisorStartY, divisorEndX, divisorEndY);
+        }
+    }
 }
 
 qreal Dashboard::startAngle() const {

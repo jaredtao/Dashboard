@@ -10,8 +10,10 @@ Item {
         anchors.centerIn: parent
         startAngle: 240
         spanAngle: -300
-        divisor: 30
+        divisor: 11
         precision: 5
+        minValue: 0
+        maxValue: 220
     }
 
     Item {
