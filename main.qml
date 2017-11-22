@@ -1,9 +1,21 @@
 import QtQuick 2.6
 import Dashboard 1.0
 Item {
+    id: root
     visible: true
     width: 800
     height: 480
+    property int value: 0
+    Behavior on value { SpringAnimation { spring: 5.0; damping: 0.5; epsilon: 0.8 } }
+    SequentialAnimation {
+        running: true
+        loops: Animation.Infinite
+        NumberAnimation { target: root; property: "value"; duration: 3000; to: 220}
+        PauseAnimation { duration: 200 }
+        NumberAnimation { target: root; property: "value"; duration: 3000; to: 0}
+        PauseAnimation { duration: 200 }
+    }
+
     Dashboard {
         width: 400
         height: 400
@@ -14,6 +26,7 @@ Item {
         precision: 5
         minValue: 0
         maxValue: 220
+        value: root.value
     }
 
     Item {

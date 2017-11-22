@@ -8,7 +8,9 @@ const int PEN_WIDTH = 3;
 const int DIVISOR_LENGTH = 16;
 const int PRECISION_LENGTH = DIVISOR_LENGTH / 2;
 const int NUMBER_TO_RING_DISTANCE = 30;
-
+const int CENTER_RADIUS = 10;
+const int HANDLE_SHORT_LENGTH = 20;
+const int HANDLE_TO_RING_DISTANCE = NUMBER_TO_RING_DISTANCE + 10;
 class PainterUser {
 public:
     PainterUser(QPainter *painter) : mPainter(painter) {
@@ -63,6 +65,7 @@ void Dashboard::paint(QPainter *painter) {
         auto divisorEndX = 0;
         auto divisorEndY = 0;
         if (0 == i % precision()) {
+            //画数字和长的分隔线
             divisorEndX = cx + (radius - DIVISOR_LENGTH) * cos(angle);
             divisorEndY = cy - (radius - DIVISOR_LENGTH) * sin(angle);
 
@@ -76,11 +79,23 @@ void Dashboard::paint(QPainter *painter) {
             painter->drawLine(divisorStartX, divisorStartY, divisorEndX, divisorEndY);
             painter->drawText(numberX, numberY, number);
         } else {
+            //画短的分隔线
             divisorEndX = cx + (radius - PRECISION_LENGTH) * cos(angle);
             divisorEndY = cy - (radius - PRECISION_LENGTH) * sin(angle);
             painter->drawLine(divisorStartX, divisorStartY, divisorEndX, divisorEndY);
         }
     }
+    //画出圆心
+    QPainterPath path;
+    path.addEllipse(cx - CENTER_RADIUS, cy - CENTER_RADIUS, CENTER_RADIUS * 2, CENTER_RADIUS * 2);
+    painter->fillPath(path, QBrush("red"));
+
+    auto handleAngle = qDegreesToRadians((value() - minValue()) / (maxValue() - minValue()) * spanAngle() + startAngle());
+    auto handleX = cx + (radius - HANDLE_TO_RING_DISTANCE) * cos(handleAngle);
+    auto handleY = cy - (radius - HANDLE_TO_RING_DISTANCE) * sin(handleAngle);
+    auto handleShortX = cx - HANDLE_SHORT_LENGTH * cos(handleAngle);
+    auto handleShortY = cy + HANDLE_SHORT_LENGTH * sin(handleAngle);
+    painter->drawLine(handleX, handleY, handleShortX, handleShortY);
 }
 
 qreal Dashboard::startAngle() const {
