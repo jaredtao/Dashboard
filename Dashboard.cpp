@@ -9,8 +9,8 @@ const int DIVISOR_LENGTH = 16;
 const int PRECISION_LENGTH = DIVISOR_LENGTH / 2;
 const int NUMBER_TO_RING_DISTANCE = 30;
 const int CENTER_RADIUS = 10;
-const int HANDLE_SHORT_LENGTH = 20;
-const int HANDLE_TO_RING_DISTANCE = NUMBER_TO_RING_DISTANCE + 10;
+const int HANDLE_SHORT_LENGTH = 30;
+const int HANDLE_TO_RING_DISTANCE = NUMBER_TO_RING_DISTANCE + 20;
 class PainterUser {
 public:
     PainterUser(QPainter *painter) : mPainter(painter) {
@@ -73,7 +73,7 @@ void Dashboard::paint(QPainter *painter) {
             auto numberY = cy - (radius - NUMBER_TO_RING_DISTANCE) * sin(angle);
             auto number = QString("%1").arg(i / precision() * gapNumber + minValue());
             //cos值符号为正，即角度在-90至90度这个区间，文字应该左偏移
-            if (!qFuzzyCompare(angle, 0) &&  0 == signbit(cos(angle))) {
+            if (!qFuzzyCompare(angle, 0.0) &&  cos(angle) - 0.0 > 0.000001) {
                 numberX -= number.length() * 8;
             }
             painter->drawLine(divisorStartX, divisorStartY, divisorEndX, divisorEndY);
@@ -90,11 +90,16 @@ void Dashboard::paint(QPainter *painter) {
     path.addEllipse(cx - CENTER_RADIUS, cy - CENTER_RADIUS, CENTER_RADIUS * 2, CENTER_RADIUS * 2);
     painter->fillPath(path, QBrush("red"));
 
+    //画个指针
     auto handleAngle = qDegreesToRadians((value() - minValue()) / (maxValue() - minValue()) * spanAngle() + startAngle());
     auto handleX = cx + (radius - HANDLE_TO_RING_DISTANCE) * cos(handleAngle);
     auto handleY = cy - (radius - HANDLE_TO_RING_DISTANCE) * sin(handleAngle);
     auto handleShortX = cx - HANDLE_SHORT_LENGTH * cos(handleAngle);
     auto handleShortY = cy + HANDLE_SHORT_LENGTH * sin(handleAngle);
+    QPen handlePen;
+    handlePen.setColor(QColor(255, 0, 0));
+    handlePen.setWidth(6);
+    handlePen.setCosmetic(true);
     painter->drawLine(handleX, handleY, handleShortX, handleShortY);
 }
 

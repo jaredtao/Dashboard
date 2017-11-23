@@ -1,10 +1,12 @@
 #include <QGuiApplication>
 #include <QQuickView>
 #include "Dashboard.h"
+#include "Ringboard.h"
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
-    qmlRegisterType<Dashboard>("Dashboard", 1, 0, "Dashboard");
+    qmlRegisterType<Dashboard>("Boards", 1, 0, "Dashboard");
+    qmlRegisterType<Ringboard>("Boards", 1, 0, "Ringboard");
 //    QQmlApplicationEngine engine;
 //    engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 //    if (engine.rootObjects().isEmpty())
