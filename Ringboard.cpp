@@ -2,7 +2,7 @@
 #include <QtMath>
 #include <QtGlobal>
 #include <QRadialGradient>
-
+#include <QConicalGradient>
 Ringboard::Ringboard() {
     connect(&mTimer, &QTimer::timeout, this, &Ringboard::timeoutSlot);
     mTimer.start(1000 / 60);
@@ -14,6 +14,10 @@ Ringboard::Ringboard() {
             << QColor(  0,   0, 255)
             << QColor(  0, 255, 255)
             << QColor(255,   0, 255);
+}
+
+void Ringboard::timeoutSlot() {
+    update();
 }
 
 void Ringboard::paint(QPainter *painter) {
@@ -47,24 +51,44 @@ void Ringboard::paint(QPainter *painter) {
                startAngle() + spanAngle(), - spanAngle());
     //闭合path
     path.closeSubpath();
-
-    //    QBrush brush;
-    //    brush.setColor(Qt::green);
-    //    brush.setStyle(Qt::SolidPattern);
-
-    QRadialGradient gradiant;
-    gradiant.setCenter(cx, cy);
-    gradiant.setCenterRadius(radiusInner());
-    gradiant.setRadius(radiusOuter());
-    gradiant.setFocalPoint(cx, cy);
-    qreal len = radiusOuter() - radiusInner();
     int colorCount = mColors.count();
-    qreal percentStep = (len / radiusOuter()) / colorCount;
-    for (int i = 0; i < colorCount; ++i) {
-        gradiant.setColorAt(1.0 - i * percentStep, mColors.at(i));
+
+    //单一颜色brush
+    if (gradient() == RadialGradiant) {
+        //辐射渐变
+        QRadialGradient grad;
+        grad.setCenter(cx, cy);
+        grad.setCenterRadius(radiusInner());
+        grad.setRadius(radiusOuter());
+        grad.setFocalPoint(cx, cy);
+        qreal len = radiusOuter() - radiusInner();
+        qreal percentStep = (len / radiusOuter()) / colorCount;
+        for (int i = 0; i < colorCount; ++i) {
+            grad.setColorAt(1.0 - i * percentStep, mColors.at(i));
+        }
+        QBrush brush(grad);
+        painter->fillPath(path, brush);
+    } else if (gradient() == ConicalGradiant) {
+
+        //角度渐变
+        QConicalGradient grad;
+        grad.setCenter(cx, cy);
+        grad.setAngle(startAngle());
+        qreal maxPercent = fabs(spanAngle() / 360.0);
+        qreal percentStep = maxPercent / colorCount;
+
+        for (int i = 0; i < colorCount; ++i) {
+            grad.setColorAt(1.0 - i * percentStep, mColors.at(i));
+        }
+        QBrush brush(grad);
+        painter->fillPath(path, brush);
+    } else {
+        QBrush brush;
+        brush.setColor(Qt::green);
+        brush.setStyle(Qt::SolidPattern);
+
+        painter->fillPath(path, brush);
     }
-    QBrush brush(gradiant);
-    painter->fillPath(path, brush);
     painter->restore();
 }
 
@@ -88,8 +112,8 @@ bool Ringboard::roundConer() const {
     return mRoundConer;
 }
 
-void Ringboard::timeoutSlot() {
-    update();
+Ringboard::Gradient Ringboard::gradient() const {
+    return mGradient;
 }
 
 void Ringboard::setStartAngle(qreal startAngle) {
@@ -130,4 +154,12 @@ void Ringboard::setRoundConer(bool roundConer) {
 
     mRoundConer = roundConer;
     emit roundConerChanged(mRoundConer);
+}
+
+void Ringboard::setGradient(Ringboard::Gradient gradient) {
+    if (mGradient == gradient)
+        return;
+
+    mGradient = gradient;
+    emit gradientChanged(mGradient);
 }

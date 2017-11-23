@@ -18,7 +18,16 @@ class Ringboard : public QQuickPaintedItem {
     Q_PROPERTY(qreal radiusOuter READ radiusOuter WRITE setRadiusOuter NOTIFY radiusOuterChanged)
     //是否使用圆角
     Q_PROPERTY(bool roundConer READ roundConer WRITE setRoundConer NOTIFY roundConerChanged)
+
+    Q_PROPERTY(Gradient gradient READ gradient WRITE setGradient NOTIFY gradientChanged)
 public:
+    enum Gradient {
+        NoGradient = 0,
+        RadialGradiant,
+        ConicalGradiant
+    };
+    Q_ENUMS(Gradient)
+
     Ringboard();
 
     void paint(QPainter *painter) override;
@@ -33,6 +42,8 @@ public:
 
     bool roundConer() const;
 
+    Gradient gradient() const;
+
 public slots:
     void timeoutSlot();
 
@@ -46,6 +57,8 @@ public slots:
 
     void setRoundConer(bool roundConer);
 
+    void setGradient(Gradient gradient);
+
 signals:
     void startAngleChanged(qreal startAngle);
 
@@ -57,6 +70,8 @@ signals:
 
     void roundConerChanged(bool roundConer);
 
+    void gradientChanged(Gradient gradient);
+
 private:
     QTimer mTimer;
     qreal mStartAngle;
@@ -65,5 +80,6 @@ private:
     qreal mRadiusOuter;
     bool mRoundConer = false;
     QList<QColor> mColors;
+    Gradient mGradient = NoGradient;
 };
 
