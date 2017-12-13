@@ -38,7 +38,7 @@ Item {
         spanAngle: -root.value
         radiusInner: 130
         radiusOuter: 180
-        roundConer: true
+        roundConer: false
         gradient: Ringboard.ConicalGradiant
     }
     Ringboard {

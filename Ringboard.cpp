@@ -7,13 +7,13 @@ Ringboard::Ringboard() {
     connect(&mTimer, &QTimer::timeout, this, &Ringboard::timeoutSlot);
     mTimer.start(1000 / 60);
     //红橙黄绿青蓝紫
-    mColors << QColor(255,   0,  0,  255)
-            << QColor(255, 125, 0,  240)
-            << QColor(255, 255, 0,  200)
-            << QColor(  0, 255, 0,  150)
-            << QColor(  0,   0, 255,  100)
-            << QColor(  0, 255, 255,  50)
-            << QColor(255,   0, 255,  0);
+    mColors << QColor(255,   0, 0, 255)
+            << QColor(255, 125, 0, 240)
+            << QColor(255, 255, 0, 200)
+            << QColor(  0, 255, 0, 150)
+            << QColor(  0,   0, 255, 100)
+            << QColor(  0, 255, 255, 50)
+            << QColor(255,   0, 255, 1);
 }
 
 void Ringboard::timeoutSlot() {
