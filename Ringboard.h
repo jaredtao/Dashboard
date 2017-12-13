@@ -6,7 +6,6 @@
 #include <QQuickPaintedItem>
 class Ringboard : public QQuickPaintedItem {
     Q_OBJECT
-
     //起始角度。3点钟方向为0度，正数表示逆时针方向的角度，负数表示顺时针方向的角度
     Q_PROPERTY(qreal startAngle READ startAngle WRITE setStartAngle NOTIFY startAngleChanged)
     //张角 起始角度+张角=终止角度。3点钟方向为0度，正数表示逆时针方向的角度，负数表示顺时针方向的角度

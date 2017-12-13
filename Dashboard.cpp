@@ -72,9 +72,11 @@ void Dashboard::paint(QPainter *painter) {
             auto numberX = cx + (radius - NUMBER_TO_RING_DISTANCE) * cos(angle);
             auto numberY = cy - (radius - NUMBER_TO_RING_DISTANCE) * sin(angle);
             auto number = QString("%1").arg(i / precision() * gapNumber + minValue());
+            //通过FontMetrics获取QString对应的像素宽度
+            auto numberWidth = painter->fontMetrics().width(number);
             //cos值符号为正，即角度在-90至90度这个区间，文字应该左偏移
             if (!qFuzzyCompare(angle, 0.0) &&  cos(angle) - 0.0 > 0.000001) {
-                numberX -= number.length() * 8;
+                numberX -= numberWidth;
             }
             painter->drawLine(divisorStartX, divisorStartY, divisorEndX, divisorEndY);
             painter->drawText(numberX, numberY, number);
