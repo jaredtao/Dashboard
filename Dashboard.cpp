@@ -3,7 +3,7 @@
 #include <QBrush>
 #include <QtMath>
 #include <QDebug>
-
+#include <QQuickWindow>
 const int PEN_WIDTH = 3;
 const int DIVISOR_LENGTH = 16;
 const int PRECISION_LENGTH = DIVISOR_LENGTH / 2;

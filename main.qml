@@ -29,30 +29,30 @@ Item {
         maxValue: 300
         value: root.value
     }
-    Ringboard {
-        x: 401
-        y: 0
-        width: 400
-        height: 400
-        startAngle: 240
-        spanAngle: -root.value
-        radiusInner: 130
-        radiusOuter: 180
-        roundConer: false
-        gradient: Ringboard.ConicalGradiant
-    }
-    Ringboard {
-        x: 802
-        y: 0
-        width: 400
-        height: 400
-        startAngle: 240
-        spanAngle: -root.value
-        radiusInner: 130
-        radiusOuter: 180
-        roundConer: true
-        gradient: Ringboard.RadialGradiant
-    }
+//    Ringboard {
+//        x: 401
+//        y: 0
+//        width: 400
+//        height: 400
+//        startAngle: 240
+//        spanAngle: -root.value
+//        radiusInner: 130
+//        radiusOuter: 180
+//        roundConer: false
+//        gradient: Ringboard.ConicalGradiant
+//    }
+//    Ringboard {
+//        x: 802
+//        y: 0
+//        width: 400
+//        height: 400
+//        startAngle: 240
+//        spanAngle: -root.value
+//        radiusInner: 130
+//        radiusOuter: 180
+//        roundConer: true
+//        gradient: Ringboard.RadialGradiant
+//    }
     Item {
         id: fpsItem
         property int fps: 0
